@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "name": "Launch Bot",
+            "program": "${workspaceFolder}/index.mjs",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node",
+            "runtimeVersion": "16"
+        }
+    ]
+}

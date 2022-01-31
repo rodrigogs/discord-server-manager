@@ -1,0 +1,36 @@
+{
+  "name": "discord-server-manager",
+  "version": "0.0.0",
+  "description": "",
+  "type": "module",
+  "main": "index.mjs",
+  "keywords": [
+    "discord",
+    "discord.js",
+    "server-manager",
+    "bot",
+    "age",
+    "verification",
+    "age-verification"
+  ],
+  "scripts": {
+    "dev": "npx nodemon index.mjs",
+    "lint": "eslint --ext .mjs .",
+    "lint:fix": "npx pnpm lint -- --fix",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Rodrigo Gomes da Silva<rodrigo.smscom@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "date-fns": "^2.28.0",
+    "discord.js": "^13.6.0",
+    "dotenv": "^14.3.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.8.0",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^6.0.0"
+  }
+}
