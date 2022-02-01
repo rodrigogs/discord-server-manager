@@ -30,21 +30,15 @@ const askIf18Plus = async (member) => {
     return
   }
 
-  if (!reaction) {
-    await member.send('You have been kicked from the server')
-    await member.kick('You did not respond in time')
-    return
-  }
-
   switch (reaction.emoji.name) {
     case reactionButtons.confirm:
       await member.roles.add(over18role, 'User said they are over 18')
       await member.send('You have been added to the server')
-      break
+      return true
     case reactionButtons.deny:
       await member.roles.add(under18role, 'User said they are under 18')
       await member.send('You have been added to the server as an underage user')
-      break
+      return false
   }
 }
 
@@ -66,24 +60,17 @@ const askForDateOfBirth = async (client, member) => {
     return askForDateOfBirth(client, member)
   }
 
-  const date = parse(dateOfBirth, 'yyyy-MM-dd', new Date())
-  const isOver18 = differenceInYears(new Date(), date) >= 18
+  const birtDate = parse(dateOfBirth, 'yyyy-MM-dd', new Date())
+  const isBirtDateOver18 = differenceInYears(new Date(), birtDate) >= 18
 
-  if (!isOver18) {
+  if (!isBirtDateOver18) {
     const guild = member.guild
     const over18role = guild.roles.cache.find((role) => role.name === AGE_VERIF_UNDER_18_ROLE)
     const under18role = guild.roles.cache.find((role) => role.name === AGE_VERIF_UNDER_18_ROLE)
-    const userCurrentRole = member.roles.cache.find((role) => [over18role, under18role].includes(role))
-    const isUserCurrentRoleOver18 = userCurrentRole.name === over18role.name
-    if (isUserCurrentRoleOver18) {
-      await member.send('You are not over 18, I\'ll fix that for you')
-      await member.roles.remove(over18role, 'User age of birth was under 18')
-      await member.roles.add(under18role, 'User age of birth was under 18')
-    }
+    await member.send('You are not over 18, I\'ll fix that for you')
+    await member.roles.remove(over18role, 'User age of birth was under 18')
+    await member.roles.add(under18role, 'User age of birth was under 18')
   }
-
-  await member.send('You\'re good to go!')
-  await member.send('Don\'t forget to check out the #rules channel for more information')
 }
 
 const onGuilMemberAdd = (client, guild) => async (member) => {
@@ -94,14 +81,17 @@ const onGuilMemberAdd = (client, guild) => async (member) => {
   console.log(`User ${userTag} joined the server`)
   await member.send(`Hi ${userTag} welcome to the server ${member.guild.name}`)
 
-  await askIf18Plus(member)
-  await askForDateOfBirth(client, member)
+  const is18Plus = await askIf18Plus(member)
+  if (is18Plus) await askForDateOfBirth(client, member)
+
+  await member.send('You\'re good to go!')
+  await member.send('Don\'t forget to check out the #rules channel for more information')
 }
 
 export default (client) => {
   const guilds = client.guilds.cache
   for (const guild of guilds.values()) {
-    console.log(`Starting age verifier for ${guild.name}`)
+    console.log(`Starting age verifier for server ${guild.name}...`)
     client.on('guildMemberAdd', onGuilMemberAdd(client, guild))
   }
 }
