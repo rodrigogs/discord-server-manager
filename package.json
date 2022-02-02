@@ -14,6 +14,7 @@
     "age-verification"
   ],
   "scripts": {
+    "start": "node index.mjs",
     "dev": "npx nodemon index.mjs",
     "lint": "eslint --ext .mjs .",
     "lint:fix": "npx pnpm lint -- --fix",
