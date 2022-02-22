@@ -15,23 +15,33 @@
   ],
   "scripts": {
     "start": "node index.mjs",
-    "dev": "npx nodemon index.mjs",
+    "dev": "nodemon bin/bot.mjs",
     "lint": "eslint --ext .mjs .",
     "lint:fix": "npx pnpm lint -- --fix",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "ava"
   },
   "author": "Rodrigo Gomes da Silva<rodrigo.smscom@gmail.com>",
   "license": "ISC",
   "dependencies": {
-    "date-fns": "^2.28.0",
+    "@discordjs/opus": "github:discordjs/opus",
+    "ava": "^4.0.1",
+    "axios": "^0.26.0",
     "discord.js": "^13.6.0",
-    "dotenv": "^15.0.0"
+    "dotenv": "^16.0.0",
+    "kinky-quote": "^1.0.1",
+    "main": "workspace:0.0.1",
+    "winston": "^3.6.0",
+    "winston-daily-rotate-file": "^4.6.0"
   },
   "devDependencies": {
-    "eslint": "^8.8.0",
+    "eslint": "^8.9.0",
     "eslint-config-standard": "^16.0.3",
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^6.0.0"
+    "eslint-plugin-promise": "^6.0.0",
+    "nodemon": "^2.0.15"
+  },
+  "bin": {
+    "discord-server-manager": "./bin/bot.mjs"
   }
 }

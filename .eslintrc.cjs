@@ -9,7 +9,7 @@ module.exports = {
     'standard',
   ],
   parserOptions: {
-    ecmaVersion: 12,
+    ecmaVersion: 13,
     sourceType: 'module',
   },
   rules: {
@@ -33,15 +33,4 @@ module.exports = {
     it: 'readonly',
     beforeAll: 'readonly',
   },
-  overrides: [
-    {
-      files: ['**/serverless.js'],
-      parserOptions: {
-        sourceType: 'script',
-      },
-      rules: {
-        'import/no-commonjs': 'off',
-      },
-    },
-  ],
 }

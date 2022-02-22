@@ -1,8 +1,38 @@
 {
     "configurations": [
+    {
+        "console": "integratedTerminal",
+        "internalConsoleOptions": "neverOpen",
+        "name": "nodemon",
+        "program": "${workspaceFolder}/bin/bot.mjs",
+        "request": "launch",
+        "restart": true,
+        "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/nodemon",
+        "skipFiles": [
+            "<node_internals>/**"
+        ],
+        "type": "pwa-node"
+    },
+        {
+            "type": "node",
+            "name": "vscode-jest-tests",
+            "request": "launch",
+            "program": "${workspaceFolder}/node_modules/jest/bin/jest.js",
+            "args": [
+                "--runInBand",
+                "--watchAll=false"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "disableOptimisticBPs": true,
+            "windows": {
+                "program": "${workspaceFolder}/node_modules/jest/bin/jest"
+            }
+        },
         {
             "name": "Launch Bot",
-            "program": "${workspaceFolder}/index.mjs",
+            "program": "${workspaceFolder}/bin/bot.mjs",
             "request": "launch",
             "skipFiles": [
                 "<node_internals>/**"
