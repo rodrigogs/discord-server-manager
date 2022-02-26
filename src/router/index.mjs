@@ -1,5 +1,7 @@
 import logger from 'main/logger.mjs'
-import Route from 'main/router/route.mjs'
+import Route from './route.mjs'
+import MessageRule from './message-rule.mjs'
+import InteractionRule from './interaction-rule.mjs'
 // import fs from 'fs'
 
 export default class Router {
@@ -71,4 +73,11 @@ export default class Router {
     this.#messageRoutes.push(route)
     return this
   }
+}
+
+export {
+  Router,
+  Route,
+  MessageRule,
+  InteractionRule,
 }

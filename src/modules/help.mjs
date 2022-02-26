@@ -1,5 +1,6 @@
 import fs from 'fs/promises'
 import isBot from 'main/validators/messages/is-bot.mjs'
+import MessageRule from 'main/router/message-rule.mjs'
 
 const modules = await fs.readdir('./src/modules').then((files) => {
   return Promise.all(files
@@ -11,7 +12,7 @@ const modules = await fs.readdir('./src/modules').then((files) => {
     }))
 })
 
-export default {
+export default new MessageRule({
   name: 'Help',
   description: 'Answers with a list of commands',
   command: ['help', 'h'],
@@ -36,4 +37,4 @@ ${commands.map((command) => `\`${ctx.botPrefix}${command.command}\` - ${command.
     `
     await ctx.message.reply(message)
   },
-}
+})

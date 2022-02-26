@@ -1,7 +1,8 @@
 import isBot from 'main/validators/messages/is-bot.mjs'
+import MessageRule from 'main/router/message-rule.mjs'
 
 export default [
-  {
+  new MessageRule({
     name: 'Remember',
     description: 'Remember a value',
     command: ['remember', 'r'],
@@ -13,8 +14,8 @@ export default [
       await ctx.store.set('!remember', key, value)
       await message.reply(`Remembering ${key} as ${value}`)
     },
-  },
-  {
+  }),
+  new MessageRule({
     name: 'Forget',
     description: 'Forget a value',
     command: ['forget', 'f'],
@@ -25,8 +26,8 @@ export default [
       await ctx.store.set('!remember', key)
       await message.reply(`Forgetting ${key}`)
     },
-  },
-  {
+  }),
+  new MessageRule({
     name: 'Answer',
     description: 'Answer a value',
     command: ['answer', 'a'],
@@ -38,5 +39,5 @@ export default [
       if (!value) return await message.reply(`I don't know ${key}`)
       await message.reply(`${key} is ${value}`)
     },
-  },
+  }),
 ]

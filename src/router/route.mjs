@@ -1,5 +1,5 @@
 import logger from 'main/logger.mjs'
-import AdminService from 'main/services/admin.mjs'
+import ConfigService from 'main/services/config.mjs'
 
 export default class Route {
   #context = null
@@ -13,12 +13,7 @@ export default class Route {
   }
 
   /**
-   * @param {Object[]} rules
-   * @param {String} [rules[].name]
-   * @param {String} [rules[].description]
-   * @param {Function|Function[]} [rules[].validator]
-   * @param {String|String[]} rules[].prefix
-   * @param {Function} rules[].processor
+   * @param {import('./message-rule.mjs')[]} messageRules Message rules to add
    * @returns {Route}
    */
   addMessageRules (rules) {
@@ -27,11 +22,7 @@ export default class Route {
   }
 
   /**
-   * @param {Object[]} rules
-   * @param {String} [rules[].name]
-   * @param {String} [rules[].description]
-   * @param {Function|Function[]} [rules[].validator]
-   * @param {Function} rules[].processor
+   * @param {import('./interaction-rule.mjs')[]} interactionRules Interaction rules to add
    * @returns {Route}
    */
   addInteractionRules (rules) {
@@ -39,47 +30,25 @@ export default class Route {
     return this
   }
 
-  #filterCommand (botPrefix, rule, message) {
-    if (rule.command === null) return true
-
-    const firstMessageChunk = message.content.split(' ')[0]
-    if (!firstMessageChunk.startsWith(botPrefix)) return false
-
-    const messageCommand = firstMessageChunk.substr(botPrefix.length)
-    if (rule.command instanceof Array) {
-      return rule.command.includes(messageCommand)
-    }
-
-    return rule.command === messageCommand
-  }
-
-  #filterValid (rule, message) {
-    if (!rule.validator) return true
-    if (rule.validator instanceof Array) {
-      return rule.validator.every((validator) => validator(message))
-    }
-    return rule.validator(message)
-  }
-
-  #getMessageContent (message) {
-    const firstMessageChunk = message.content.split(' ')[0]
-    return message.content.slice(firstMessageChunk.length + 1)
-  }
-
+  /**
+   *
+   * @param {import('discord.js').Message} message
+   * @returns {Promise<void>}
+   */
   async processMessage (message) {
-    const botPrefix = await AdminService.getBotCommandsPrefix(message)
+    const botPrefix = await ConfigService.getBotCommandsPrefix(message)
     const context = { ...this.#context, message, botPrefix }
 
     const rules = this.#messageRules
-      .filter((rule) => this.#filterCommand(botPrefix, rule, message))
-      .filter((rule) => this.#filterValid(rule, message))
+      .filter((rule) => rule.validate(context))
+
     return Promise.all(rules.map(async (rule, i) => {
       try {
         logger.info(`[${i}] Processing message for rule ${rule.name}`)
-        const messageContent = this.#getMessageContent(message)
-        await rule.processor(context, messageContent)
+        await rule.run(context)
       } catch (err) {
-        logger.error(`Error processing message for rule ${rule.name || i}`, err)
+        console.error(err)
+        logger.error(`Error processing message for rule ${rule.name || i}`, err.message)
       }
     }))
   }

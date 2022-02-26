@@ -1,4 +1,4 @@
-import { ADMIN_PARTITION, CONFIGS, CONFIG_CHANNELS, CONFIG_ROLES } from 'main/modules/admin/_constants.mjs'
+import { CONFIGS_PARTITION, CONFIGS, CONFIG_CHANNELS, CONFIG_ROLES } from 'main/modules/config/_constants.mjs'
 import { store } from 'main/store/index.mjs'
 
 const code = (str) => `\`\`\`${str}\`\`\``
@@ -10,7 +10,7 @@ const getBotAdminRolesIds = (guildRoles, roles) => getBotAdminRoles(roles)
   .map(role => guildRoles.find(r => r.name === role)?.id)
   .filter(id => !!id)
 
-export default class AdminService {
+export default class ConfigService {
   /**
    * @param {Object} ctx
    * @param {String} [prefix='!']
@@ -21,7 +21,7 @@ export default class AdminService {
     const { message } = ctx
     const guild = message.channel.guild
     const key = guildKey(CONFIG_CHANNELS.BOT_PREFIX, guild.id)
-    await store.set(ADMIN_PARTITION, key, prefix)
+    await store.set(CONFIGS_PARTITION, key, prefix)
     await message.reply(`Bot commands prefix set to: ${prefix}`)
   }
 
@@ -31,7 +31,7 @@ export default class AdminService {
    */
   static async getBotCommandsPrefix (message) {
     const guild = message.channel.guild
-    const prefix = guild && await store.get(ADMIN_PARTITION, guildKey(CONFIG_CHANNELS.BOT_PREFIX, guild.id))
+    const prefix = guild && await store.get(CONFIGS_PARTITION, guildKey(CONFIG_CHANNELS.BOT_PREFIX, guild.id))
     return prefix || '!'
   }
 
@@ -49,12 +49,12 @@ export default class AdminService {
     if (botCommandsChannelIds.length === 0) {
       const guildChannelNames = guildChannels.map(c => c.name).join(', ')
       return message.reply(
-          `Please provide a valid channel name: ${code(`${ctx.botPrefix}admin ${CONFIGS.CHANNELS} ${CONFIG_CHANNELS.BOT_COMMANDS_CHANNELS} [${guildChannelNames}]`)}`,
+          `Please provide a valid channel name: ${code(`${ctx.botPrefix}config ${CONFIGS.CHANNELS} ${CONFIG_CHANNELS.BOT_COMMANDS_CHANNELS} [${guildChannelNames}]`)}`,
       )
     }
 
     const key = guildKey(CONFIG_ROLES.BOT_COMMANDS_CHANNELS, guild.id)
-    await store.set(ADMIN_PARTITION, key, botCommandsChannelIds)
+    await store.set(CONFIGS_PARTITION, key, botCommandsChannelIds)
     await message.reply(`Bot commands channel set to: ${botCommandsChannelIds.join(', ')}`)
   }
 
@@ -65,7 +65,7 @@ export default class AdminService {
   static async getCommandChannels (ctx) {
     const { message } = ctx
     const guild = message.channel.guild
-    const botCommandsChannelId = await store.get(ADMIN_PARTITION, guildKey(CONFIG_ROLES.BOT_COMMANDS_CHANNELS, guild.id))
+    const botCommandsChannelId = await store.get(CONFIGS_PARTITION, guildKey(CONFIG_ROLES.BOT_COMMANDS_CHANNELS, guild.id))
     return botCommandsChannelId ? guild.channels.cache.get(botCommandsChannelId) : null
   }
 
@@ -83,12 +83,12 @@ export default class AdminService {
     if (botAdminRoleIds.length === 0) {
       const guildRoleNames = guildRoles.map(r => r.name).join(', ')
       return message.reply(
-        `Please provide a valid role name: ${code(`${ctx.botPrefix}admin ${CONFIGS.ROLES} ${CONFIG_ROLES.ADMIN_ROLES} [${guildRoleNames}]`)}`,
+        `Please provide a valid role name: ${code(`${ctx.botPrefix}config ${CONFIGS.ROLES} ${CONFIG_ROLES.ADMIN_ROLES} [${guildRoleNames}]`)}`,
       )
     }
 
     const key = guildKey(CONFIG_ROLES.BOT_ADMIN_ROLES, guild.id)
-    await store.set(ADMIN_PARTITION, key, botAdminRoleIds)
+    await store.set(CONFIGS_PARTITION, key, botAdminRoleIds)
     await message.reply(`Bot admin roles set to: ${botAdminRoles.join(', ')}`)
   }
 
@@ -101,7 +101,7 @@ export default class AdminService {
     const { message } = ctx
     const guild = message.channel.guild
     const guildRoles = guild.roles.cache
-    const botAdminRoles = await store.get(ADMIN_PARTITION, guildKey(CONFIG_ROLES.BOT_ADMIN_ROLES, guild.id))
+    const botAdminRoles = await store.get(CONFIGS_PARTITION, guildKey(CONFIG_ROLES.BOT_ADMIN_ROLES, guild.id))
     return botAdminRoles.map(roleId => guildRoles.find(r => r.id === roleId))
   }
 
@@ -120,12 +120,12 @@ export default class AdminService {
     if (!channelId) {
       const guildChannelNames = guildChannels.map(c => c.name).join(', ')
       return message.reply(
-        `Please provide a valid channel name: ${code(`${ctx.botPrefix}admin ${CONFIGS.CHANNELS} ${CONFIG_CHANNELS.LOGS_CHANNEL} [${guildChannelNames}]`)}`,
+        `Please provide a valid channel name: ${code(`${ctx.botPrefix}config ${CONFIGS.CHANNELS} ${CONFIG_CHANNELS.LOGS_CHANNEL} [${guildChannelNames}]`)}`,
       )
     }
 
     const key = guildKey(CONFIG_CHANNELS.LOGS_CHANNEL, guild.id)
-    await store.set(ADMIN_PARTITION, key, channelId)
+    await store.set(CONFIGS_PARTITION, key, channelId)
     await message.reply(`Logs channel set to: ${channel}`)
   }
 }

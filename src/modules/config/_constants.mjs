@@ -1,4 +1,4 @@
-export const ADMIN_PARTITION = 'admin'
+export const CONFIGS_PARTITION = 'configs'
 
 export const CONFIGS = {
   ROLES: 'roles',

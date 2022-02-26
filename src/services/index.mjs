@@ -1,1 +1,1 @@
-export { default as AdminService } from './admin.mjs'
+export { default as ConfigService } from './config.mjs'

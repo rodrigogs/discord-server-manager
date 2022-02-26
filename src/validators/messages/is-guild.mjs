@@ -1,4 +1,4 @@
-export default (predicate = true) => (message) => {
+export default (predicate = true) => ({ message }) => {
   const isGuild = !!message.guildId
   return predicate === isGuild
 }
