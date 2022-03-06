@@ -9,4 +9,5 @@ bot()
   .catch((err) => {
     logger.error('Bot failed to start')
     logger.error(err)
+    console.error(err)
   })

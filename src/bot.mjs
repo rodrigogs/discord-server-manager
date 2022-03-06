@@ -2,6 +2,7 @@ import { Client, Intents } from 'discord.js'
 import { DISCORD_BOT_TOKEN } from './config.mjs'
 import init from './init.mjs'
 import configure from './configure.mjs'
+import logger from './logger.mjs'
 
 const client = new Client({
   intents: [
@@ -27,6 +28,8 @@ const client = new Client({
 client.login(DISCORD_BOT_TOKEN)
 
 export default async () => {
+  logger.debug('Initializing...')
   await init(client)
+  logger.debug('Configuring...')
   await configure(client)
 }

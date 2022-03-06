@@ -1,5 +1,6 @@
 import path from 'path'
 import fs from 'fs/promises'
+import StoreAdapter from './store-adapter.mjs'
 
 const fileExists = async (filePath) => {
   try {
@@ -50,59 +51,26 @@ const getValue = async (storePath, partition, key) => {
   }
 }
 
-export default class FsAdapter {
-  #options = {}
-
+export default class FsAdapter extends StoreAdapter {
   constructor (options = { path: './.store' }) {
-    this.#options = options
+    super(options)
   }
 
-  /**
-   * Sets a value in a store partition.
-   *
-   * @param {String|Number} partition The partition to store the key in
-   * @param {String|Number} key The key to store must be unique.
-   * Each key is stored in a separate partition and will be only accessible by that partition.
-   * If you want to store an object, use JSON.stringify.
-   * Use undefined to delete the key.
-   * @param {String|String[]|Object|Object[]} value The value to be stored.
-   * @param {Object} [options = {}] Set operation options. Not used in this adapter.
-   * @returns {Promise<void>}
-   */
   async set (partition, key, value, _options = {}) {
-    await ensurePartition(this.#options.path, partition)
-    const filePath = path.join(this.#options.path, partition, key)
+    await ensurePartition(this.options.path, partition)
+    const filePath = path.join(this.options.path, partition, key)
     if (value === undefined) return await fileExists(filePath) && fs.unlink(filePath)
     return fs.writeFile(filePath, JSON.stringify(value))
   }
 
-  /**
-   * Gets a value from a store partition.
-   * If the key is not found, it returns undefined.
-   *
-   * @param {String|Number} partition The partition to get the key from
-   * @param {String|Number} key The key to get
-   * @param {Object} [options = {}] Get operation options. Not used in this adapter.
-   * @returns {Promise<String|String[]|Object|Object[]>}
-   */
   async get (partition, key, _options = {}) {
-    await ensurePartition(this.#options.path, partition)
-    return getValue(this.#options.path, partition, key)
+    await ensurePartition(this.options.path, partition)
+    return getValue(this.options.path, partition, key)
   }
 
-  /**
-   * Lists all keys in a store partition.
-   * If the partition does not exist, it returns an empty array.
-   *
-   * @param {String|Number} partition The partition to list keys from
-   * @param {Object} [options = {}] List operation options. Not used in this adapter.
-   * @param {String|Number} [options.keysStartingWith] Only list keys starting with this string.
-   * @param {String|Number} [options.keysEndingWith] Only list keys ending with this string.
-   * @returns {Promise<String[]>}
-   */
   async list (partition, options = {}) {
-    await ensurePartition(this.#options.path, partition)
-    const partitionPath = path.join(this.#options.path, partition)
+    await ensurePartition(this.options.path, partition)
+    const partitionPath = path.join(this.options.path, partition)
     const files = await fs.readdir(partitionPath)
     const filteredFiles = files.filter((file) => {
       if (options.keysStartingWith && !file.startsWith(options.keysStartingWith)) return false

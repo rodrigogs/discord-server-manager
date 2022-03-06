@@ -1,26 +1,27 @@
-import { CONFIGS_PARTITION, CONFIGS, CONFIG_CHANNELS, CONFIG_ROLES } from 'main/modules/config/_constants.mjs'
+import { CONFIGS_PARTITION, CONFIGS, CONFIG_CHANNELS, CONFIG_ROLES } from 'main/commands/config/_constants.mjs'
 import { store } from 'main/store/index.mjs'
+import BaseService from './base.mjs'
+
+const DEFAULT_PREFIX = '!'
 
 const code = (str) => `\`\`\`${str}\`\`\``
-
-const guildKey = (config, guildId) => `${config}-${guildId}`
 
 const getBotAdminRoles = (roles) => roles.split(',').map(role => role.trim())
 const getBotAdminRolesIds = (guildRoles, roles) => getBotAdminRoles(roles)
   .map(role => guildRoles.find(r => r.name === role)?.id)
   .filter(id => !!id)
 
-export default class ConfigService {
+export default class ConfigService extends BaseService {
   /**
    * @param {Object} ctx
    * @param {String} [prefix='!']
    */
-  static async setBotCommandsPrefix (ctx, prefix = '!') {
-    if (!prefix || prefix.length === 0) throw new Error('Prefix cannot be empty')
+  static async setBotCommandsPrefix (ctx, prefix = DEFAULT_PREFIX) {
+    if (!prefix || prefix.length === 0) return ctx.message.reply('Please provide a valid prefix')
 
     const { message } = ctx
     const guild = message.channel.guild
-    const key = guildKey(CONFIG_CHANNELS.BOT_PREFIX, guild.id)
+    const key = this.createGuildKey(guild, CONFIGS.botPrefix)
     await store.set(CONFIGS_PARTITION, key, prefix)
     await message.reply(`Bot commands prefix set to: ${prefix}`)
   }
@@ -31,8 +32,12 @@ export default class ConfigService {
    */
   static async getBotCommandsPrefix (message) {
     const guild = message.channel.guild
-    const prefix = guild && await store.get(CONFIGS_PARTITION, guildKey(CONFIG_CHANNELS.BOT_PREFIX, guild.id))
-    return prefix || '!'
+    if (!guild || !guild.id) return DEFAULT_PREFIX
+    const key = this.createGuildKey(guild, CONFIGS.botPrefix)
+    let prefix = guild && await store.get(CONFIGS_PARTITION, key)
+    // Replace _ with space
+    if (prefix && prefix.endsWith('_')) prefix = prefix.slice(0, -1) + ' '
+    return prefix || DEFAULT_PREFIX
   }
 
   /**
@@ -49,11 +54,11 @@ export default class ConfigService {
     if (botCommandsChannelIds.length === 0) {
       const guildChannelNames = guildChannels.map(c => c.name).join(', ')
       return message.reply(
-          `Please provide a valid channel name: ${code(`${ctx.botPrefix}config ${CONFIGS.CHANNELS} ${CONFIG_CHANNELS.BOT_COMMANDS_CHANNELS} [${guildChannelNames}]`)}`,
+          `Please provide a valid channel name: ${code(`${ctx.botPrefix}config ${CONFIGS.channels} ${CONFIG_CHANNELS.BOT_COMMANDS_CHANNELS} [${guildChannelNames}]`)}`,
       )
     }
 
-    const key = guildKey(CONFIG_ROLES.BOT_COMMANDS_CHANNELS, guild.id)
+    const key = this.createGuildKey(guild, CONFIG_ROLES.BOT_COMMANDS_CHANNELS)
     await store.set(CONFIGS_PARTITION, key, botCommandsChannelIds)
     await message.reply(`Bot commands channel set to: ${botCommandsChannelIds.join(', ')}`)
   }
@@ -65,7 +70,7 @@ export default class ConfigService {
   static async getCommandChannels (ctx) {
     const { message } = ctx
     const guild = message.channel.guild
-    const botCommandsChannelId = await store.get(CONFIGS_PARTITION, guildKey(CONFIG_ROLES.BOT_COMMANDS_CHANNELS, guild.id))
+    const botCommandsChannelId = await store.get(CONFIGS_PARTITION, this.createGuildKey(guild, CONFIG_ROLES.BOT_COMMANDS_CHANNELS))
     return botCommandsChannelId ? guild.channels.cache.get(botCommandsChannelId) : null
   }
 
@@ -83,11 +88,11 @@ export default class ConfigService {
     if (botAdminRoleIds.length === 0) {
       const guildRoleNames = guildRoles.map(r => r.name).join(', ')
       return message.reply(
-        `Please provide a valid role name: ${code(`${ctx.botPrefix}config ${CONFIGS.ROLES} ${CONFIG_ROLES.ADMIN_ROLES} [${guildRoleNames}]`)}`,
+        `Please provide a valid role name: ${code(`${ctx.botPrefix}config ${CONFIGS.roles} ${CONFIG_ROLES.adminRoles} [${guildRoleNames}]`)}`,
       )
     }
 
-    const key = guildKey(CONFIG_ROLES.BOT_ADMIN_ROLES, guild.id)
+    const key = this.createGuildKey(guild, CONFIG_ROLES.BOT_ADMIN_ROLES)
     await store.set(CONFIGS_PARTITION, key, botAdminRoleIds)
     await message.reply(`Bot admin roles set to: ${botAdminRoles.join(', ')}`)
   }
@@ -101,7 +106,7 @@ export default class ConfigService {
     const { message } = ctx
     const guild = message.channel.guild
     const guildRoles = guild.roles.cache
-    const botAdminRoles = await store.get(CONFIGS_PARTITION, guildKey(CONFIG_ROLES.BOT_ADMIN_ROLES, guild.id))
+    const botAdminRoles = await store.get(CONFIGS_PARTITION, this.createGuildKey(guild, CONFIG_ROLES.BOT_ADMIN_ROLES))
     return botAdminRoles.map(roleId => guildRoles.find(r => r.id === roleId))
   }
 
@@ -120,12 +125,102 @@ export default class ConfigService {
     if (!channelId) {
       const guildChannelNames = guildChannels.map(c => c.name).join(', ')
       return message.reply(
-        `Please provide a valid channel name: ${code(`${ctx.botPrefix}config ${CONFIGS.CHANNELS} ${CONFIG_CHANNELS.LOGS_CHANNEL} [${guildChannelNames}]`)}`,
+        `Please provide a valid channel name: ${code(`${ctx.botPrefix}config ${CONFIGS.channels} ${CONFIG_CHANNELS.logsChannel} [${guildChannelNames}]`)}`,
       )
     }
 
-    const key = guildKey(CONFIG_CHANNELS.LOGS_CHANNEL, guild.id)
+    const key = this.createGuildKey(guild, CONFIG_CHANNELS.logsChannel)
     await store.set(CONFIGS_PARTITION, key, channelId)
     await message.reply(`Logs channel set to: ${channel}`)
+  }
+
+  /**
+   * @param {Object} ctx
+   * @returns {Promise<import('discord.js').Channel>}
+   */
+  static async getLogsChannel (ctx) {
+    const { message } = ctx
+    const guild = message.channel.guild
+    const channelId = await store.get(CONFIGS_PARTITION, this.createGuildKey(guild, CONFIG_CHANNELS.logsChannel))
+    return channelId ? guild.channels.cache.get(channelId) : null
+  }
+
+  /**
+   * Get the role for users who are 18-
+   * @param {Object} ctx
+   * @param {String} role
+   */
+  static async setUnder18Role (ctx, role) {
+    const { message } = ctx
+
+    const guild = message.channel.guild
+    const guildRoles = guild.roles.cache
+
+    const roleId = this.findRoleId(guildRoles, role)
+    if (!roleId) {
+      return message.reply('Role not found.')
+    }
+
+    const key = this.createGuildKey(guild, CONFIG_ROLES.under18Role)
+    await store.set(CONFIGS_PARTITION, key, roleId)
+    await message.reply(`Under 18 role set to: ${role}`)
+  }
+
+  /**
+   * Get the role for users who are 18-
+   * @param {Object} ctx
+   * @returns {Promise<import('discord.js').Role>}
+   */
+  static async getUnder18Role (ctx) {
+    const { member } = ctx
+    const guild = member.guild
+    const guildRoles = guild.roles.cache
+    const key = this.createGuildKey(guild, CONFIG_ROLES.under18Role)
+    const roleId = await store.get(CONFIGS_PARTITION, key)
+    if (!roleId) return undefined
+    return guildRoles.find(r => r.id === roleId)
+  }
+
+  /**
+     * Set the role for users who are 18+
+     * @param {Object} ctx
+     * @param {String} role
+     */
+  static async setOver18Role (ctx, role) {
+    const { message } = ctx
+
+    const guild = message.channel.guild
+    const guildRoles = guild.roles.cache
+
+    if (!role || !role.length) {
+      const guildRoleNames = guildRoles.map(r => r.name).join(', ')
+      return message.reply(
+        `Please provide a valid role name: ${code(`${ctx.botPrefix}config ${CONFIGS.roles} ${CONFIG_ROLES.adminRoles} [${guildRoleNames}]`)}`,
+      )
+    }
+
+    const roleId = this.findRoleId(guildRoles, role.trim())
+    if (!roleId) {
+      return message.reply('Role not found.')
+    }
+
+    const key = this.createGuildKey(guild, CONFIG_ROLES.over18Role)
+    await store.set(CONFIGS_PARTITION, key, roleId)
+    await message.reply(`Over 18 role set to: ${role}`)
+  }
+
+  /**
+   * Get the role for users who are 18+
+   * @param {Object} ctx
+   * @returns {Promise<import('discord.js').Role>}
+   */
+  static async getOver18Role (ctx) {
+    const { member } = ctx
+    const guild = member.guild
+    const guildRoles = guild.roles.cache
+    const key = this.createGuildKey(guild, CONFIG_ROLES.over18Role)
+    const roleId = await store.get(CONFIGS_PARTITION, key)
+    if (!roleId) return undefined
+    return guildRoles.find(r => r.id === roleId)
   }
 }

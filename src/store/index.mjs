@@ -1,9 +1,12 @@
-import Adapters from './adapters/index.mjs'
-import { STORE_ADAPTER } from '../config.mjs'
+import { STORE_ADAPTER } from 'main/config.mjs'
+import * as Adapters from './adapters/index.mjs'
 
 export default class Store {
   #adapter = null
 
+  /**
+   * @param {import('./adapters/store-adapter.mjs')} [adapter=FsAdapter] Store adapter.
+   */
   constructor (adapter = new Adapters[STORE_ADAPTER]()) {
     this.#adapter = adapter
   }
@@ -18,6 +21,10 @@ export default class Store {
 
   async del (partition, key) {
     return this.#adapter.set(partition, key, undefined)
+  }
+
+  async list (partition) {
+    return this.#adapter.list(partition)
   }
 }
 

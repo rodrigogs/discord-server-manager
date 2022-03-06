@@ -5,11 +5,13 @@ export default class Route {
   #context = null
   #messageRules = []
   #interactionRules = []
+  #memberJoinedRules = []
 
-  constructor (context, { messageRules = [], interactionRules = [] }) {
+  constructor (context, { messageRules = [], interactionRules = [], memberJoinedRules = [] }) {
     this.#context = context
     this.#messageRules = messageRules
     this.#interactionRules = interactionRules
+    this.#memberJoinedRules = memberJoinedRules
   }
 
   /**
@@ -17,7 +19,7 @@ export default class Route {
    * @returns {Route}
    */
   addMessageRules (rules) {
-    this.#messageRules.push(rules)
+    this.#messageRules.push(...rules)
     return this
   }
 
@@ -27,6 +29,15 @@ export default class Route {
    */
   addInteractionRules (rules) {
     this.#interactionRules.push(...rules)
+    return this
+  }
+
+  /**
+   * @param {import('./member-joined-rule.mjs')[]} memberJoinedRules Member joined rules to add
+   * @returns {Route}
+   */
+  addMemberJoinedRules (rules) {
+    this.#memberJoinedRules.push(...rules)
     return this
   }
 
@@ -44,11 +55,53 @@ export default class Route {
 
     return Promise.all(rules.map(async (rule, i) => {
       try {
-        logger.info(`[${i}] Processing message for rule ${rule.name}`)
+        logger.info(`Processing message for rule [${rule.name || i}]`)
         await rule.run(context)
       } catch (err) {
         console.error(err)
-        logger.error(`Error processing message for rule ${rule.name || i}`, err.message)
+        logger.error(`Error processing message for rule [${rule.name || i}]`, err.message)
+      }
+    }))
+  }
+
+  /**
+   * @param {import('discord.js').Interaction} interaction
+   * @returns {Promise<void>}
+   */
+  async processInteraction (interaction) {
+    const context = { ...this.#context, interaction }
+
+    const rules = this.#interactionRules
+      .filter((rule) => rule.validate(context))
+
+    return Promise.all(rules.map(async (rule, i) => {
+      try {
+        logger.info(`Processing interaction for rule [${rule.name || i}]`)
+        await rule.run(context)
+      } catch (err) {
+        console.error(err)
+        logger.error(`Error processing interaction for rule [${rule.name || i}]`, err.message)
+      }
+    }))
+  }
+
+  /**
+   * @param {import('discord.js').GuildMember} member
+   * @returns {Promise<void>}
+   */
+  async processMemberJoined (member) {
+    const context = { ...this.#context, member }
+
+    const rules = this.#memberJoinedRules
+      .filter((rule) => rule.validate(context))
+
+    return Promise.all(rules.map(async (rule, i) => {
+      try {
+        logger.info(`Processing member joined for rule [${rule.name || i}]`)
+        await rule.run(context)
+      } catch (err) {
+        console.error(err)
+        logger.error(`Error processing member joined for rule [${rule.name || i}]`, err.message)
       }
     }))
   }

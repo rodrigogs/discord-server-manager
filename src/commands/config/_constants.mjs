@@ -1,21 +1,24 @@
 export const CONFIGS_PARTITION = 'configs'
 
 export const CONFIGS = {
-  ROLES: 'roles',
-  CHANNELS: 'channels',
+  prefix: 'prefix',
+  roles: 'roles',
+  channels: 'channels',
 }
 
 export const CONFIGS_ = Object.values(CONFIGS)
 
 export const CONFIG_ROLES = {
-  ADMIN_ROLES: 'admin-roles',
+  adminRoles: 'adminRoles',
+  over18Role: 'over18Role',
+  under18Role: 'under18Role',
 }
 
 export const CONFIG_ROLES_ = Object.values(CONFIG_ROLES)
 
 export const CONFIG_CHANNELS = {
-  LOGS_CHANNEL: 'logs-channel',
-  COMMAND_CHANNELS: 'command-channels',
+  logsChannel: 'logsChannel',
+  commandChannels: 'commandChannels',
 }
 
 export const CONFIG_CHANNELS_ = Object.values(CONFIG_CHANNELS)

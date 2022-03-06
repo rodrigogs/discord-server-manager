@@ -20,10 +20,10 @@ importers:
       main: workspace:0.0.1
       nodemon: ^2.0.15
       opusscript: ^0.0.8
-      sodium: ^3.0.2
       tweetnacl: ^1.0.3
       winston: ^3.6.0
       winston-daily-rotate-file: ^4.6.0
+      youtube-search-api: ^1.1.0
       ytdl-core: ^4.10.1
     dependencies:
       '@discordjs/opus': github.com/discordjs/opus/fbd68eeca7637559bf3141b0ae76d48873b8d18a
@@ -36,10 +36,10 @@ importers:
       libsodium-wrappers: 0.7.9
       main: link:src
       opusscript: 0.0.8
-      sodium: 3.0.2
       tweetnacl: 1.0.3
       winston: 3.6.0
       winston-daily-rotate-file: 4.6.0_winston@3.6.0
+      youtube-search-api: 1.1.0
       ytdl-core: 4.10.1
     devDependencies:
       eslint: 8.9.0
@@ -444,6 +444,14 @@ packages:
       yargs: 17.3.1
     transitivePeerDependencies:
       - supports-color
+    dev: false
+
+  /axios/0.21.4:
+    resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
+    dependencies:
+      follow-redirects: 1.14.9
+    transitivePeerDependencies:
+      - debug
     dev: false
 
   /axios/0.25.0:
@@ -2690,13 +2698,6 @@ packages:
       is-fullwidth-code-point: 4.0.0
     dev: false
 
-  /sodium/3.0.2:
-    resolution: {integrity: sha512-IsTwTJeoNBU97km3XkrbCGC/n/9aUQejgD3QPr2YY2gtbSPru3TI6nhCqgoez9Mv88frF9oVZS/jrXFbd6WXyA==}
-    requiresBuild: true
-    dependencies:
-      node-addon-api: 4.3.0
-    dev: false
-
   /sprintf-js/1.0.3:
     resolution: {integrity: sha1-BOaSb2YolTVPPdAVIDYzuFcpfiw=}
     dev: false
@@ -3127,6 +3128,14 @@ packages:
   /yocto-queue/1.0.0:
     resolution: {integrity: sha512-9bnSc/HEW2uRy67wc+T8UwauLuPJVn28jb+GtJY16iiKWyvmYJRXVT4UamsAEGQfPohgr2q4Tq0sQbQlxTfi1g==}
     engines: {node: '>=12.20'}
+    dev: false
+
+  /youtube-search-api/1.1.0:
+    resolution: {integrity: sha512-mzaCMzwJIPw1NaW+HanK9WnXcds5aWSA1zdp73gXeoUjkP19rVtjFmdZLvz0abHq/WhpbesNZRVRgJs+H/j8mA==}
+    dependencies:
+      axios: 0.21.4
+    transitivePeerDependencies:
+      - debug
     dev: false
 
   /ytdl-core/4.10.1:

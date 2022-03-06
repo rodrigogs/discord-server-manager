@@ -1,32 +1,21 @@
-export default class MessageRule {
-  #name = null
-  #description = null
+import Rule from './rule.mjs'
+import { RULE_TYPES } from './_constants.mjs'
+
+export default class MessageRule extends Rule {
   #command = null
-  #validator = null
-  #processor = null
 
   /**
    * Create a new rule
-   * @param {String} name The name of the rule
-   * @param {String} description The description of the rule
-   * @param {String|String[]} [command=null] The command(s) that the rule responds to
-   * @param {Function|Function[]} [validator=null] The validator(s) that the rule uses
-   * @param {Function} processor The processor that the rule uses
+   * @param {Object} options The options for the rule
+   * @param {String} options.name The name of the rule
+   * @param {String} [options.description] The description of the rule
+   * @param {String|String[]} [options.command=null] The command(s) that the rule responds to
+   * @param {Function|Function[]} [options.validator=null] The validator(s) that the rule uses
+   * @param {Function} options.processor The processor that the rule uses
    */
-  constructor ({ name, description, command = null, validator = null, processor }) {
-    this.#name = name
-    this.#description = description
-    this.#command = command
-    this.#validator = validator
-    this.#processor = processor
-  }
-
-  get name () {
-    return this.#name
-  }
-
-  get description () {
-    return this.#description
+  constructor (options) {
+    super({ ...options, type: RULE_TYPES.message })
+    this.#command = options.command
   }
 
   get command () {
@@ -38,34 +27,26 @@ export default class MessageRule {
     return message.content.slice(firstMessageChunk.length + 1)
   }
 
-  #validateCommand (context, rule) {
-    if (rule.command === null) return true
+  #validateCommand (context) {
+    if (this.command === null) return true
 
-    const firstMessageChunk = context.message.content.split(' ')[0]
-    if (!firstMessageChunk.startsWith(context.botPrefix)) return false
+    const { message, botPrefix } = context
+    const messageContentWithtouBotPrefix = message.content.slice(botPrefix.length)
+    const command = messageContentWithtouBotPrefix.split(' ')[0]?.trim()
 
-    const messageCommand = firstMessageChunk.substr(context.botPrefix.length)
-    if (rule.command instanceof Array) {
-      return rule.command.includes(messageCommand)
+    if (this.command instanceof Array) {
+      return this.command.includes(command)
     }
 
-    return rule.command === messageCommand
-  }
-
-  #validateValidators (context) {
-    if (!this.#validator) return true
-    if (this.#validator instanceof Array) {
-      return this.#validator.every((validator) => validator(context))
-    }
-    return this.#validator(context)
+    return this.command === command
   }
 
   validate (context) {
-    return this.#validateCommand(context, this) && this.#validateValidators(context)
+    return this.#validateCommand(context) && this.applyValidators(context)
   }
 
   async run (context) {
     const message = this.#getMessageContent(context.message)
-    return this.#processor(context, message)
+    return this.processor(context, message)
   }
 }

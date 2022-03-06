@@ -2,12 +2,14 @@ import logger from 'main/logger.mjs'
 import Route from './route.mjs'
 import MessageRule from './message-rule.mjs'
 import InteractionRule from './interaction-rule.mjs'
+import MemberJoinedRule from './member-joined-rule.mjs'
 // import fs from 'fs'
 
 export default class Router {
   #discordClient = null
   #messageRoutes = []
-  #interactionRules = []
+  #interactionRoutes = []
+  #memberJoinedRoutes = []
 
   constructor (discorClient) {
     this.#discordClient = discorClient
@@ -17,6 +19,7 @@ export default class Router {
   #registerEvents () {
     this.#discordClient.on('messageCreate', (message) => this.#onMessage(message))
     this.#discordClient.on('interactionCreate', (interaction) => this.#onInteraction(interaction))
+    this.#discordClient.on('guildMemberAdd', (member) => this.#onMemberJoined(member))
   }
 
   #onMessage (message) {
@@ -34,8 +37,16 @@ export default class Router {
       `Router.onInteraction: ( CustomId: ${interaction.customId}, Content: ${interaction.content}, Bot: ${interaction.bot} )`,
     )
     // fs.writeFileSync(`./test/fixtures/interactions/dm-${Date.now()}.json`, JSON.stringify(interaction, null, 2))
-    this.#interactionRules.forEach(route => {
+    this.#interactionRoutes.forEach(route => {
       route.processInteractions(interaction)
+    })
+  }
+
+  #onMemberJoined (member) {
+    logger.debug(`Router.onMemberJoined: ( User: ${member.user.tag} )`)
+    // fs.writeFileSync(`./test/fixtures/member-joined-guild/dm-${Date.now()}.json`, JSON.stringify(interaction, null, 2))
+    this.#memberJoinedRoutes.forEach(route => {
+      route.processMemberJoined(member)
     })
   }
 
@@ -46,10 +57,24 @@ export default class Router {
     }
   }
 
+  addMessageRoute (messageRule) {
+    logger.debug(`Adding message route for rule: ${messageRule.name}`)
+    const route = new Route(this.#context, { messageRules: [messageRule] })
+    this.#messageRoutes.push(route)
+    return this
+  }
+
   addMessageRoutes (messageRules = []) {
     for (const messageRule of messageRules) {
       this.addMessageRoute(messageRule)
     }
+    return this
+  }
+
+  addInteractionRoute (interactionRule) {
+    logger.debug(`Adding message route: ${interactionRule.name}`)
+    const route = new Route(this.#context, { interactionRules: [interactionRule] })
+    this.#interactionRoutes.push(route)
     return this
   }
 
@@ -60,17 +85,17 @@ export default class Router {
     return this
   }
 
-  addMessageRoute (messageRule) {
-    logger.debug(`Adding message route for rule: ${messageRule.name}`)
-    const route = new Route(this.#context, { messageRules: [messageRule] })
-    this.#messageRoutes.push(route)
+  addMemberJoinedRoute (memberJoinedRule) {
+    logger.debug(`Adding member joined route: ${memberJoinedRule.name}`)
+    const route = new Route(this.#context, { memberJoinedRules: [memberJoinedRule] })
+    this.#memberJoinedRoutes.push(route)
     return this
   }
 
-  addInteractionRoute (interactionRule) {
-    logger.debug(`Adding message route: ${interactionRule.name}`)
-    const route = new Route(this.#context, { interactionRules: [interactionRule] })
-    this.#messageRoutes.push(route)
+  addMemberJoinedRoutes (memberJoinedRules = []) {
+    for (const memberJoinedRule of memberJoinedRules) {
+      this.addMemberJoinedRoute(memberJoinedRule)
+    }
     return this
   }
 }
@@ -80,4 +105,5 @@ export {
   Route,
   MessageRule,
   InteractionRule,
+  MemberJoinedRule,
 }

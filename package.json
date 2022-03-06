@@ -14,7 +14,7 @@
     "age-verification"
   ],
   "scripts": {
-    "start": "node index.mjs",
+    "start": "node bin/bot.mjs",
     "dev": "nodemon bin/bot.mjs",
     "lint": "eslint --ext .mjs .",
     "lint:fix": "npx pnpm lint -- --fix",
@@ -33,14 +33,14 @@
     "libsodium-wrappers": "^0.7.9",
     "main": "workspace:0.0.1",
     "opusscript": "^0.0.8",
-    "sodium": "^3.0.2",
     "tweetnacl": "^1.0.3",
     "winston": "^3.6.0",
-    "winston-daily-rotate-file": "^4.6.0",
+    "winston-daily-rotate-file": "^4.6.1",
+    "youtube-search-api": "^1.1.0",
     "ytdl-core": "^4.10.1"
   },
   "devDependencies": {
-    "eslint": "^8.9.0",
+    "eslint": "^8.10.0",
     "eslint-config-standard": "^16.0.3",
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-node": "^11.1.0",
