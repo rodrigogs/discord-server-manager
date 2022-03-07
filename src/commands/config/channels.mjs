@@ -1,4 +1,4 @@
-import ConfigService from 'main/services/config.mjs'
+import ConfigService from 'bot/services/config.mjs'
 import { CONFIGS, CONFIG_CHANNELS, CONFIG_CHANNELS_ } from './_constants.mjs'
 
 export default async (ctx, messageContent) => {

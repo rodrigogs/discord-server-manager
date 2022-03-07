@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
-import { bot, logger } from 'main'
+import bot from 'bot/bot.mjs';
+import logger from 'lib/logger.mjs'
 
 bot()
   .then(() => {

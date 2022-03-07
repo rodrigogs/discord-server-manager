@@ -1,8 +1,8 @@
 import { Client, Intents } from 'discord.js'
-import { DISCORD_BOT_TOKEN } from './config.mjs'
+import { DISCORD_BOT_TOKEN } from 'lib/config.mjs'
 import init from './init.mjs'
 import configure from './configure.mjs'
-import logger from './logger.mjs'
+import logger from 'lib/logger.mjs'
 
 const client = new Client({
   intents: [

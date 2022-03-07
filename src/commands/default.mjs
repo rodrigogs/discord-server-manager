@@ -1,5 +1,5 @@
-import { isBot, content } from 'main/validators/messages/index.mjs'
-import MessageRule from 'main/router/message-rule.mjs'
+import { isBot, content } from 'lib/validators/messages/index.mjs'
+import MessageRule from 'lib/router/message-rule.mjs'
 import { MessageButton, MessageActionRow } from 'discord.js'
 
 const getBotInviteLink = (id) => `https://discord.com/oauth2/authorize?client_id=${id}&permissions=8&scope=bot%20applications.commands`

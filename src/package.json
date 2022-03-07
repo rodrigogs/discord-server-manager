@@ -1,9 +1,17 @@
 {
-  "name": "main",
+  "name": "bot",
   "version": "0.0.1",
   "type": "module",
   "main": "index.mjs",
   "dependencies": {
-    "date-fns": "^2.28.0"
+    "@discordjs/opus": "github:discordjs/opus",
+    "@discordjs/voice": "^0.8.0",
+    "discord.js": "^13.6.0",
+    "kinky-quote": "^1.0.1",
+    "libsodium-wrappers": "^0.7.9",
+    "opusscript": "^0.0.8",
+    "tweetnacl": "^1.0.3",
+    "youtube-search-api": "^1.1.0",
+    "ytdl-core": "^4.10.1"
   }
 }

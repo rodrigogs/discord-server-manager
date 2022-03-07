@@ -1,12 +1,13 @@
-import { Router, Store, commands, events, logger } from 'main'
-import { RULE_TYPES } from 'main/router/_constants.mjs'
+import { Router, Store, logger } from 'lib'
+import { events, commands, interactions } from 'bot'
+import { RULE_TYPES } from 'lib/router/_rule-types.mjs'
 
 export default (client) => {
   client.user.setActivity(`on ${client.guilds.cache.size} servers`)
 
   const router = new Router(client, new Store())
 
-  const features = { ...commands, ...events }
+  const features = { ...commands, ...events, ...interactions }
   const keys = Object.keys(features)
   for (const key of keys) {
     logger.debug(`Loading module ${key}`)

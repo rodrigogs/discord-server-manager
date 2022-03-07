@@ -1,5 +1,5 @@
 import { CONFIGS, CONFIG_ROLES, CONFIG_ROLES_ } from './_constants.mjs'
-import ConfigService from 'main/services/config.mjs'
+import ConfigService from 'bot/services/config.mjs'
 
 export default async (ctx, messageContent = '') => {
   const { message, botPrefix } = ctx

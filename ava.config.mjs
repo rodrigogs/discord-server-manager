@@ -1,8 +1,9 @@
 export default {
+  failFast: true,
   files: [
     'src/**/*.test.mjs',
+    'lib/**/*.test.mjs',
   ],
-  failFast: true,
   require: [
     './test/ava-setup.mjs',
   ],

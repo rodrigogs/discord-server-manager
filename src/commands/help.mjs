@@ -1,6 +1,6 @@
 import fs from 'fs/promises'
-import isBot from 'main/validators/messages/is-bot.mjs'
-import MessageRule from 'main/router/message-rule.mjs'
+import isBot from 'lib/validators/messages/is-bot.mjs'
+import MessageRule from 'lib/router/message-rule.mjs'
 
 const commands = (await fs.readdir('./src/commands').then((files) =>
   Promise.all(files

@@ -1,6 +1,6 @@
-import { isBot } from 'main/validators/member-joined/index.mjs'
-import MemberJoinedRule from 'main/router/member-joined-rule.mjs'
-import AgeVerificationService from 'main/services/age-verification.mjs'
+import { isBot } from 'lib/validators/member-joined/index.mjs'
+import MemberJoinedRule from 'lib/router/member-joined-rule.mjs'
+import AgeVerificationService from 'bot/services/age-verification.mjs'
 
 export default new MemberJoinedRule({
   name: 'Age Verification',

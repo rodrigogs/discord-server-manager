@@ -1,5 +1,5 @@
-import isBot from 'main/validators/messages/is-bot.mjs'
-import MessageRule from 'main/router/message-rule.mjs'
+import isBot from 'lib/validators/messages/is-bot.mjs'
+import MessageRule from 'lib/router/message-rule.mjs'
 
 export default [
   new MessageRule({

@@ -1,7 +1,9 @@
+import { PassThrough } from 'stream'
 import ytdl from 'ytdl-core'
 import youtubeSearchApi from 'youtube-search-api'
-import isBot from 'main/validators/messages/is-bot.mjs'
-import logger from 'main/logger.mjs'
+import isBot from 'lib/validators/messages/is-bot.mjs'
+import logger from 'lib/logger.mjs'
+import MessageRule from 'lib/router/message-rule.mjs'
 import {
   AudioPlayerStatus,
   NoSubscriberBehavior,
@@ -11,8 +13,6 @@ import {
   joinVoiceChannel,
   getVoiceConnection,
 } from '@discordjs/voice'
-import MessageRule from 'main/router/message-rule.mjs'
-import { PassThrough } from 'stream'
 
 const createYoutubeStream = (info, format, options, chunkSize = 512 * 1024) => {
   const stream = new PassThrough()

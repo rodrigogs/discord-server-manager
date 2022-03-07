@@ -1,10 +1,10 @@
-import logger from 'main/logger.mjs'
+import logger from 'lib/logger.mjs'
 import configureRolesSettings from './roles.mjs'
 import configureChannelsSettings from './channels.mjs'
 import { CONFIGS, CONFIGS_ } from './_constants.mjs'
-import { isGuild, isBot } from 'main/validators/messages/index.mjs'
-import MessageRule from 'main/router/message-rule.mjs'
-import ConfigService from 'main/services/config.mjs'
+import { isGuild, isBot } from 'lib/validators/messages/index.mjs'
+import MessageRule from 'lib/router/message-rule.mjs'
+import ConfigService from 'bot/services/config.mjs'
 
 const processor = async (ctx, messageContent) => {
   const { message, botPrefix } = ctx

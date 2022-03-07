@@ -1,5 +1,5 @@
-import { CONFIGS_PARTITION, CONFIGS, CONFIG_CHANNELS, CONFIG_ROLES } from 'main/commands/config/_constants.mjs'
-import { store } from 'main/store/index.mjs'
+import { CONFIGS_PARTITION, CONFIGS, CONFIG_CHANNELS, CONFIG_ROLES } from 'bot/commands/config/_constants.mjs'
+import { store } from 'lib/store/index.mjs'
 import BaseService from './base.mjs'
 
 const DEFAULT_PREFIX = '!'
